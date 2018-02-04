@@ -18,7 +18,8 @@ final class Tile extends Label {
     private final int y;
     private volatile int value;
     private ScaleTransition scale;
-    private FadeTransition fade;
+    private ScaleTransition fade;
+
     private boolean merged = false;
 
     Tile(int x, int y, int value) {
@@ -36,9 +37,12 @@ final class Tile extends Label {
         scale.setCycleCount(2);
         scale.setAutoReverse(true);
 
-        fade = new FadeTransition(Duration.millis(1000), this);
-        fade.setFromValue(0);
-        fade.setToValue(1);
+        fade = new ScaleTransition(Duration.millis(150), this);
+        fade.setFromX(0.2);
+        fade.setFromY(0.2);
+        fade.setToY(1);
+        fade.setToX(1);
+        
         fade.setCycleCount(1);
 
         setUI();
@@ -135,11 +139,12 @@ final class Tile extends Label {
 
     void setValue(int value) {
         this.value = value;
+        setTooltip(new Tooltip(toString()+" "+merged));
         setUI();
     }
 
     @Override
     public String toString() {
-        return "x=" + x + ", y=" + y + ", value=" + value;
+        return "x=" + x + ", y=" + y + ", value=" + value+", merged="+merged;
     }
 }

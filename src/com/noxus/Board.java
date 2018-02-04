@@ -24,13 +24,11 @@ public final class Board extends VBox {
     public Board() {
 
         this.tiles = new ArrayList<>();
-        ;
         this.array = new Tile[4][4];
         this.history = new ArrayList<>();
         this.points = new SimpleIntegerProperty(0);
-        this.points.addListener((observable, oldValue, newValue) -> this.last = newValue.intValue());
 
-        super.setStyle("-fx-background-color: #B3A396");
+        super.setStyle("-fx-background-color: #B3A396; -fx-background-radius: 10px;");
         super.setSpacing(10);
         super.setAlignment(Pos.CENTER);
 
@@ -52,29 +50,43 @@ public final class Board extends VBox {
     }
 
     private boolean moved = false;
+    private boolean merged = false;
+    private boolean test = false;
 
     private void move(Tile tile, Move move) {
         if (!tile.isFree()) {
             findFarthestPosition(tile, move).ifPresent(found -> {
                 found.setValue(tile.getValue());
+                found.setMerged(tile.isMerged());
                 tile.reset();
                 moved = true;
             });
         }
     }
 
-    private boolean test = false;
-
     public void test() {
         test = true;
 
-        array[0][0].setValue(2);
-        array[0][2].setValue(2);
+        int[][] x = new int[4][];
 
-        array[2][0].setValue(2);
-        array[2][2].setValue(2);
+        x[0] = new int[]{4, 0, 0, 0};
+        x[1] = new int[]{2, 0, 0, 0};
+        x[2] = new int[]{0, 0, 0, 0};
+        x[3] = new int[]{2, 0, 0, 0};
+        history.add(x);
 
-        array[2][1].setValue(2);
+
+        reverse();
+
+        array[0][1].setMerged(true);
+        array[0][1].setValue(array[0][1].getValue());
+        System.out.println(array[0][1]);
+    }
+
+    private void addPoints(int value) {
+        this.last = value;
+        this.points.setValue(value + points.intValue());
+        this.merged = true;
     }
 
     private void merge(Tile tile, Move move) {
@@ -93,7 +105,7 @@ public final class Board extends VBox {
                     if (array[tile.getX()][tile.getY() - 1].getValue() == tile.getValue() && !array[tile.getX()][tile.getY() - 1].isMerged()) {
                         array[tile.getX()][tile.getY() - 1].setValue(tile.getValue() * 2);
                         array[tile.getX()][tile.getY() - 1].setMerged(true);
-                        points.setValue(points.intValue() + tile.getValue() * 2);
+                        addPoints(tile.getValue() * 2);
                         tile.reset();
                     }
                 }
@@ -103,7 +115,7 @@ public final class Board extends VBox {
                     if (array[tile.getX()][tile.getY() + 1].getValue() == tile.getValue() && !array[tile.getX()][tile.getY() + 1].isMerged()) {
                         array[tile.getX()][tile.getY() + 1].setValue(tile.getValue() * 2);
                         array[tile.getX()][tile.getY() + 1].setMerged(true);
-                        points.setValue(points.intValue() + tile.getValue() * 2);
+                        addPoints(tile.getValue() * 2);
                         tile.reset();
                     }
                 }
@@ -113,7 +125,7 @@ public final class Board extends VBox {
                     if (array[tile.getX() - 1][tile.getY()].getValue() == tile.getValue() && !array[tile.getX() - 1][tile.getY()].isMerged()) {
                         array[tile.getX() - 1][tile.getY()].setValue(tile.getValue() * 2);
                         array[tile.getX() - 1][tile.getY()].setMerged(true);
-                        points.setValue(points.intValue() + tile.getValue() * 2);
+                        addPoints(tile.getValue() * 2);
                         tile.reset();
                     }
                 }
@@ -123,7 +135,7 @@ public final class Board extends VBox {
                     if (array[tile.getX() + 1][tile.getY()].getValue() == tile.getValue() && !array[tile.getX() + 1][tile.getY()].isMerged()) {
                         array[tile.getX() + 1][tile.getY()].setValue(tile.getValue() * 2);
                         array[tile.getX() + 1][tile.getY()].setMerged(true);
-                        points.setValue(points.intValue() + tile.getValue() * 2);
+                        addPoints(tile.getValue() * 2);
                         tile.reset();
                     }
                 }
@@ -192,6 +204,41 @@ public final class Board extends VBox {
         return tiles.stream()
                 .filter(Tile::isFree)
                 .collect(Collectors.toList());
+    }
+
+    private void moveTiles(Move move){
+        switch (move) {
+            case RIGHT:
+                for (int i = 1; i <= 4; i++) {
+                    for (int j = 1; j <= 4; j++) {
+                        if (array[4 - j][4 - i].getY() < 3) {
+                            move(array[4 - j][4 - i], move);
+                        }
+                    }
+                }
+                break;
+            case LEFT:
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        move(array[i][j], move);
+                    }
+                }
+                break;
+            case UP:
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        move(array[j][i], move);
+                    }
+                }
+                break;
+            case DOWN:
+                for (int i = 1; i <= 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        move(array[4 - i][j], move);
+                    }
+                }
+                break;
+        }
     }
 
     private void merge(Move move) {
@@ -271,46 +318,21 @@ public final class Board extends VBox {
 
     public final void move(Move move) {
 
+        tiles.forEach(r -> r.setMerged(false));
         this.moved = false;
+        this.merged = false;
+
         saveHistory();
 
         merge(move);
 
-        switch (move) {
-            case RIGHT:
-                for (int i = 1; i <= 4; i++) {
-                    for (int j = 1; j <= 4; j++) {
-                        if (array[4 - j][4 - i].getY() < 3) {
-                            move(array[4 - j][4 - i], move);
-                        }
-                    }
-                }
-                break;
-            case LEFT:
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        move(array[i][j], move);
-                    }
-                }
-                break;
-            case UP:
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        move(array[j][i], move);
-                    }
-                }
-                break;
-            case DOWN:
-                for (int i = 1; i <= 4; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        move(array[4 - i][j], move);
-                    }
-                }
-                break;
-        }
+        moveTiles(move);
 
         merge(move);
 
+        if(merged) {
+            moveTiles(move);
+        }
 
         for (Tile tile : tiles) {
             if (tile.isMerged()) {
@@ -319,7 +341,7 @@ public final class Board extends VBox {
             }
         }
 
-        if (!getFreeTiles().isEmpty() && moved) {
+        if ((!getFreeTiles().isEmpty() && moved) || merged) {
             addRandomTile();
         } else if (getFreeTiles().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -327,6 +349,10 @@ public final class Board extends VBox {
             alert.setContentText("Sigue intentando");
             alert.showAndWait();
         }
+    }
+
+    public final int getMoves() {
+        return history.size();
     }
 
     public final SimpleIntegerProperty pointsProperty() {
@@ -340,7 +366,7 @@ public final class Board extends VBox {
     public final void print() {
         System.out.println();
         for (int i = 0; i < 4; i++) {
-            System.out.println(Arrays.toString(getData()[i]));
+            System.out.println("x["+i+"] = new int[]"+Arrays.toString(getData()[i]).replace("[", "{").replace("]", "}")+";");
         }
     }
 }

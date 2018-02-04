@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
+import java.awt.*;
 import java.text.DecimalFormat;
 
 /**
@@ -18,22 +19,27 @@ import java.text.DecimalFormat;
 public class Integrator {
 
 
-    public static JFXPanel createSceneForSwing(Board board){
+    public static void createSceneForSwing(Container container){
         JFXPanel jfxPanel = new JFXPanel();
+        container.add(jfxPanel);
         Platform.setImplicitExit(false);
-        jfxPanel.setScene(createScene(board));
-        return jfxPanel;
+        Platform.runLater(()-> jfxPanel.setScene(createScene(new Board())));
     }
 
     public static Scene createScene(Board board){
         AnchorPane root = new AnchorPane();
         Label labelPuntos = new Label("Points: 0");
-        labelPuntos.setFont(new Font(35));
+        Label labelMoves = new Label("Moves: 0");
+
+        labelPuntos.setFont(new Font(25));
+        labelMoves.setFont(new Font(25));
 
         HBox hBoxContainer = new HBox();
         hBoxContainer.getChildren().add(labelPuntos);
+        hBoxContainer.getChildren().add(labelMoves);
         hBoxContainer.setAlignment(Pos.CENTER);
         hBoxContainer.setPrefHeight(40);
+        hBoxContainer.setSpacing(20.0);
 
         root.getChildren().add(hBoxContainer);
         root.getChildren().add(board);
@@ -51,6 +57,7 @@ public class Integrator {
 
         board.pointsProperty().addListener((observable, oldValue, newValue) -> {
             labelPuntos.setText("Points: "+format.format(newValue.intValue()));
+            labelMoves.setText("Moves: "+board.getMoves());
         });
 
         Scene scene = new Scene(root, 500,500);
