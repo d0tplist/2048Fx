@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 /**
  * 2048
  * Created by alex on 2/3/18.
+ *
+ *
+ * Tested on OSX and Windows 
  */
 public final class Board extends VBox {
 
@@ -21,7 +24,11 @@ public final class Board extends VBox {
     private final SimpleIntegerProperty points;
     private int last = 0;
 
-    public Board() {
+    public Board(){
+        this(true);
+    }
+
+    public Board(boolean animations) {
 
         this.tiles = new ArrayList<>();
         this.array = new Tile[4][4];
@@ -41,9 +48,23 @@ public final class Board extends VBox {
             super.getChildren().add(hBox);
 
             for (int j = 0; j < 4; j++) {
-                array[i][j] = new Tile(i, j, 0);
+                if(animations) {
+                    array[i][j] = new TileComponent(i, j, 0);
+                }else{
+                    array[i][j] = new TileComponent(i, j, 0){
+                        @Override
+                        public void animate() {
+
+                        }
+
+                        @Override
+                        public void appear() {
+
+                        }
+                    };
+                }
                 tiles.add(array[i][j]);
-                hBox.getChildren().add(array[i][j]);
+                hBox.getChildren().add((TileComponent)array[i][j]);
             }
 
         }
@@ -309,9 +330,10 @@ public final class Board extends VBox {
                     array[i][j].setValue(x[i][j]);
                 }
             }
-            System.out.println(last);
-            this.points.setValue(points.intValue() - last);
+
             history.remove(history.size() - 1);
+            this.points.setValue(Math.max(points.intValue() - last, 0));
+            last = 0;
         }
     }
 

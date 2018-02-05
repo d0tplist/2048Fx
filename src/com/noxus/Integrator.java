@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.function.Supplier;
 
 /**
  * Created by alex on 2/4/18.
@@ -19,11 +20,11 @@ import java.text.DecimalFormat;
 public class Integrator {
 
 
-    public static void createSceneForSwing(Container container){
+    public static void createSceneForSwing(Container container, Supplier<Board> supplier){
         JFXPanel jfxPanel = new JFXPanel();
         container.add(jfxPanel);
         Platform.setImplicitExit(false);
-        Platform.runLater(()-> jfxPanel.setScene(createScene(new Board())));
+        Platform.runLater(()-> jfxPanel.setScene(createScene(supplier.get())));
     }
 
     public static Scene createScene(Board board){
