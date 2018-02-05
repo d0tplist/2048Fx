@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * Created by alex on 2/3/18.
  *
  *
- * Tested on OSX and Windows 
+ * Tested on OSX and Windows
  */
 public final class Board extends VBox {
 
