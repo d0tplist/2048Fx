@@ -58,17 +58,19 @@ public class UsingAIExample extends Application {
         while (true) {
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(150);//try it from 25 :S
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
+            //board.getData(); Assuming that you process the current game data and your next move is the best "assuming"
             move = Move.getNext(move);
 
             Platform.runLater(()-> {
+
                 if (board.move(move)) {
                     best = Math.max(board.getPoints(), best);
-                    System.out.println("Retry with new game score: "+board.getPoints()+" best: "+best);
+                    System.out.println("Retry with new game score: "+board.getPoints()+" best: "+best+" moves: "+board.getMoves());
                     board.newGame();
                 }
             });
