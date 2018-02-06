@@ -49,4 +49,4 @@ board.reverse();
 ```
 
 
-[logo]: https://github.com/d0tplist/2048Fx/blob/master/screen.png
+[logo]: https://github.com/d0tplist/2048Fx/raw/master/screen.png "Example"
