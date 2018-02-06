@@ -48,5 +48,4 @@ board.newGame();
 board.reverse();
 ```
 
-
-[logo]: https://github.com/d0tplist/2048Fx/raw/master/screen.png "Example"
+![alt text](https://github.com/d0tplist/2048Fx/raw/master/screen.png)
