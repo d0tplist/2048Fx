@@ -31,7 +31,9 @@ public class Integrator {
         AnchorPane root = new AnchorPane();
         Label labelPuntos = new Label("Points: 0");
         Label labelMoves = new Label("Moves: 0");
+        Label labelInstructions = new Label("Press N for new game, B for back");
 
+        labelInstructions.setAlignment(Pos.CENTER);
         labelPuntos.setFont(new Font(25));
         labelMoves.setFont(new Font(25));
 
@@ -44,6 +46,7 @@ public class Integrator {
 
         root.getChildren().add(hBoxContainer);
         root.getChildren().add(board);
+        root.getChildren().add(labelInstructions);
 
         AnchorPane.setTopAnchor(hBoxContainer, 0.0);
         AnchorPane.setRightAnchor(hBoxContainer, 0.0);
@@ -53,6 +56,10 @@ public class Integrator {
         AnchorPane.setLeftAnchor(board, 50.0);
         AnchorPane.setBottomAnchor(board, 50.0);
         AnchorPane.setRightAnchor(board, 50.0);
+
+        AnchorPane.setBottomAnchor(labelInstructions, 10.0);
+        AnchorPane.setLeftAnchor(labelInstructions, 10.0);
+        AnchorPane.setRightAnchor(labelInstructions, 10.0);
 
         DecimalFormat format = new DecimalFormat("#,##0");
 
@@ -72,8 +79,8 @@ public class Integrator {
                 board.move(Move.RIGHT);
             }else if(event.getCode() == KeyCode.LEFT){
                 board.move(Move.LEFT);
-            }else if(event.getCode() == KeyCode.R){
-                board.reset();
+            }else if(event.getCode() == KeyCode.N){
+                board.newGame();
             }else if(event.getCode() == KeyCode.P){
                 board.print();
             }else if(event.getCode() == KeyCode.T){

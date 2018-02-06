@@ -144,7 +144,7 @@ class TileComponent extends Label implements Tile {
     @Override
     public void setValue(int value) {
         this.value = value;
-        setTooltip(new Tooltip(toString() + " " + merged));
+        //setTooltip(new Tooltip(toString() + " " + merged));
         setUI();
     }
 

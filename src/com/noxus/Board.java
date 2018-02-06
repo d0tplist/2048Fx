@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * 2048
  * Created by alex on 2/3/18.
- *
+ * twitter: @d0tplist
  *
  * Tested on OSX and Windows
  */
@@ -193,7 +193,6 @@ public final class Board extends VBox {
 
     }
 
-
     private void addRandomTile() {
 
         if (test) {
@@ -201,6 +200,7 @@ public final class Board extends VBox {
         }
 
         List<Tile> free = getFreeTiles();
+
         if (!free.isEmpty()) {
             Tile tile = free.get((int) (Math.random() * free.size()));
             tile.appear();
@@ -313,9 +313,14 @@ public final class Board extends VBox {
         return x;
     }
 
-    public final void reset() {
+    public final void newGame() {
+        history.clear();
+
         tiles.forEach(Tile::reset);
+
         addRandomTile();
+        addRandomTile();
+
         this.test = false;
         this.points.setValue(0);
     }
