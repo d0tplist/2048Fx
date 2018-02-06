@@ -23,13 +23,19 @@ public final class Board extends VBox {
     private final ArrayList<int[][]> history;
     private final SimpleIntegerProperty points;
     private int last = 0;
+    private boolean aimode = false;
 
     public Board(){
-        this(true);
+        this(true, false);
     }
 
-    public Board(boolean animations) {
-
+    /**
+     * AI mode disables the Alert dialog
+     * @param animations
+     * @param aimode
+     */
+    public Board(boolean animations, boolean aimode) {
+        this.aimode = aimode;
         this.tiles = new ArrayList<>();
         this.array = new Tile[4][4];
         this.history = new ArrayList<>();
@@ -343,7 +349,11 @@ public final class Board extends VBox {
     }
 
 
-    public final void move(Move move) {
+    /**
+     * @param move
+     * @return true if you loose
+     */
+    public final boolean move(Move move) {
 
         tiles.forEach(r -> r.setMerged(false));
         this.moved = false;
@@ -371,11 +381,16 @@ public final class Board extends VBox {
         if ((!getFreeTiles().isEmpty() && moved) || merged) {
             addRandomTile();
         } else if (getFreeTiles().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Perdíste");
-            alert.setContentText("Sigue intentando");
-            alert.showAndWait();
+            if(!aimode) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Perdíste");
+                alert.setContentText("Sigue intentando");
+                alert.showAndWait();
+            }
+            return true;
         }
+
+        return false;
     }
 
     public final int getMoves() {
